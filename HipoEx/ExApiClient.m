@@ -39,7 +39,7 @@ ShowServiceError:(bool)ShowServiceError
     
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    //[manager.requestSerializer setValue:@"I" forHTTPHeaderField:@"ApiAppId"];
+    
     
     [manager.requestSerializer setTimeoutInterval:90];
     
@@ -102,7 +102,7 @@ ShowServiceError:(bool)ShowServiceError
                               encoding:NSUTF8StringEncoding];
 }
 -(NSNumber*)ShowProgress{
-    return [ExCommonHelper showGlobalProgressHUDWithTitle:@"kontrol ediliyor..." detailMessage:nil];
+    return [ExCommonHelper showGlobalProgressHUDWithTitle:@"Searching..." detailMessage:nil];
 }
 
 -(void)HideProgress:(NSNumber*)hudId {

@@ -112,14 +112,14 @@
                                                                      metrics:nil
                                                                        views:elementsDict]];
         
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[labelPublisedTime(>=60)]-|"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[labelPublisedTime]-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
                                                                      metrics:nil
                                                                        views:elementsDict]];
         
         
         
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[profileImage(>=60)]-[labelUserName(>=60)]-[labelPublisedTime(>=60)]-|"
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[profileImage(>=60)]-[labelUserName(>=60)]-[labelPublisedTime]-|"
                                                                      options:NSLayoutFormatDirectionLeadingToTrailing
                                                                      metrics:nil
                                                                        views:elementsDict]];

@@ -34,20 +34,22 @@ UITableView *tableView;
 UISearchBar *testbar;
 BOOL isFilltered;
 
+
 - (void)viewDidLoad
 {
     
 
     [super viewDidLoad];
+
     
-    testbar.delegate =self;
     
     [self getPublicPhotos];
     
-    [self searchTags:@"snow"];
+    CGRect frame = CGRectMake(self.view.bounds.origin.x, self.view.bounds.origin.y+20, self.view.bounds.size.width, self.view.bounds.size.height);
+    
     
     // init table view
-    tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    tableView = [[UITableView alloc] initWithFrame:frame style:UITableViewStylePlain];
     
     testbar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 70, 320, 44)];
     [tableView setTableHeaderView:testbar];
@@ -55,6 +57,7 @@ BOOL isFilltered;
     // must set delegate & dataSource, otherwise the the table will be empty and not responsive
     tableView.delegate = self;
     tableView.dataSource = self;
+    testbar.delegate =self;
     
     tableView.backgroundColor = [UIColor whiteColor];
     
@@ -76,7 +79,10 @@ BOOL isFilltered;
 // number of row in the section, I assume there is only 1 row
 - (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section
 {
-    return _data.count;
+    if(!isFilltered)
+        return _data.count;
+    else
+        return filteredTableViewData.count;
 }
 
 // the cell will be returned to the tableView
@@ -84,20 +90,9 @@ BOOL isFilltered;
 {
     
     
-    /*
-    _data1 = ([_data objectAtIndex:indexPath.row]);
+    if(!isFilltered){
     
-    NSDictionary *images=[_data1 objectForKey:@"images"];
-    
-    NSDictionary *standard = [images objectForKey:@"standard_resolution"];
-    
-    NSString *image_url = [standard objectForKey:@"url"];
-    
-    */
-    
-    
-    
-    static NSString *cellIdentifier = @"HistoryCell";
+    static NSString *cellIdentifier = @"ImageCell";
     
     // Similar to UITableViewCell, but
     TableViewCell *cell = (TableViewCell *)[theTableView dequeueReusableCellWithIdentifier:cellIdentifier];
@@ -110,7 +105,6 @@ BOOL isFilltered;
     //username
     cell.labelUserName.text = imageModel.user.username;
     
-
     //pulised_image
     cell.publishedImage.image=imageModel.publised_image;
     
@@ -121,7 +115,29 @@ BOOL isFilltered;
     
     cell.labelPublisedTime.text=imageModel.created_time;
     
-    return cell;
+        
+        return cell;
+        
+    }else
+        
+    {
+    
+        static NSString *cellIdentifier = @"Filtercell";
+        
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+        
+        if(!cell)
+        {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+            
+        }
+        cell.textLabel.text=[[filteredTableViewData objectAtIndex:indexPath.row] objectForKey:@"name"];
+
+        return cell;
+    }
+    
+    
+    
 }
 
 #pragma mark - UITableViewDelegate
@@ -134,7 +150,10 @@ BOOL isFilltered;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    return 400.0;
+    if(!isFilltered)
+        return 400.0;
+    else
+        return 25;
 }
 
 
@@ -211,7 +230,7 @@ BOOL isFilltered;
         NSDictionary *user=[_data1 objectForKey:@"user"];
         NSString *profile_picture_url = [user objectForKey:@"profile_picture"];
         NSString *username = [user objectForKey:@"username"];
-        NSString *created_time = [user objectForKey:@"created_time"];
+        NSString *created_time = [_data1 objectForKey:@"created_time"];
         
         //profile_image
         NSURL *profile_image_url = [NSURL URLWithString:profile_picture_url];
@@ -255,6 +274,7 @@ BOOL isFilltered;
     [tagApi searchTags:request searchTagCompleted:^(int status, searchTagResponseModel *response, NSError *err) {
         
         filteredTableViewData=response.data;
+        [tableView reloadData];
         
     } ShowServiceError:YES];
     
@@ -291,7 +311,7 @@ BOOL isFilltered;
 
 -(void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
-    if(searchText.length == 0)
+    if(searchText.length <=3)
     {
         isFilltered = NO;
     }else
